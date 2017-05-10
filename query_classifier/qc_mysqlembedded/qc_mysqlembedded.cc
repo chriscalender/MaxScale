@@ -135,6 +135,8 @@ inline void get_string_and_length(const char* cs, const char** s, size_t* length
 }
 #endif
 
+static uint32_t sql_mode = 0;
+
 /**
  * Ensures that the query is parsed. If it is not already parsed, it
  * will be parsed.
@@ -147,6 +149,7 @@ bool ensure_query_is_parsed(GWBUF* query)
 
     if (!parsed)
     {
+        global_system_variables.sql_mode |= sql_mode;
         parsed = parse_query(query);
 
         if (!parsed)
@@ -2845,7 +2848,7 @@ int32_t qc_mysql_setup(const char* zArgs)
 
                 if (strcmp(value, "MODE_ORACLE") == 0)
                 {
-                    global_system_variables.sql_mode |= MODE_ORACLE;
+                    sql_mode = MODE_ORACLE;
                 }
                 else
                 {
