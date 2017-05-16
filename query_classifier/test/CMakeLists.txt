@@ -44,6 +44,9 @@ if (BUILD_QC_MYSQLEMBEDDED)
   add_test(TestQC_CompareWhiteSpace compare -v 2 -S -s "select user from mysql.user; ")
 
   add_test(TestQC_version_sensitivity version_sensitivity)
+
+  add_test(TestQC_CompareOracle-1 compare -A sql_mode=MODE_ORACLE -v 2 ${CMAKE_CURRENT_SOURCE_DIR}/oracle/binlog_stm_ps.test)
+  add_test(TestQC_CompareOracle-2 compare -A sql_mode=MODE_ORACLE -v 2 ${CMAKE_CURRENT_SOURCE_DIR}/oracle/binlog_stm_sp.test)
 endif()
 
 add_subdirectory(canonical_tests)
