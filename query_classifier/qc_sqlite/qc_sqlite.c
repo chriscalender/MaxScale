@@ -1193,7 +1193,8 @@ static void update_field_infos(QC_SQLITE_INFO* info,
                 else if (!is_builtin_readonly_function(zToken,
                                                        this_thread.version_major,
                                                        this_thread.version_minor,
-                                                       this_thread.version_patch))
+                                                       this_thread.version_patch,
+                                                       this_thread.sql_mode == QC_SQL_MODE_ORACLE))
                 {
                     info->type_mask |= QUERY_TYPE_WRITE;
                 }
