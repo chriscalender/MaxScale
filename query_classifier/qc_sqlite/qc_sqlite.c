@@ -148,9 +148,10 @@ static struct
  */
 static thread_local struct
 {
-    bool initialized;
-    sqlite3* db;      // Thread specific database handle.
-    QC_SQLITE_INFO* info;
+    bool initialized;       // Whether the thread specific data has been initialized.
+    sqlite3* db;            // Thread specific database handle.
+    qc_sql_mode_t sql_mode; // What sql_mode is used.
+    QC_SQLITE_INFO* info;   // The information for the current statement being classified.
     uint32_t version_major;
     uint32_t version_minor;
     uint32_t version_patch;
@@ -440,7 +441,7 @@ static QC_SQLITE_INFO* info_init(QC_SQLITE_INFO* info, uint32_t collect)
     info->function_infos_len = 0;
     info->function_infos_capacity = 0;
     info->initializing = false;
-    info->sql_mode = this_unit.sql_mode;
+    info->sql_mode = this_thread.sql_mode;
 
     return info;
 }
@@ -3307,6 +3308,8 @@ static int32_t qc_sqlite_get_database_names(GWBUF* query, char*** names, int* si
 static int32_t qc_sqlite_get_preparable_stmt(GWBUF* stmt, GWBUF** preparable_stmt);
 static void qc_sqlite_set_server_version(uint64_t version);
 static void qc_sqlite_get_server_version(uint64_t* version);
+static int32_t qc_sqlite_get_sql_mode(qc_sql_mode_t* sql_mode);
+static int32_t qc_sqlite_set_sql_mode(qc_sql_mode_t sql_mode);
 
 static bool get_key_and_value(char* arg, const char** pkey, const char** pvalue)
 {
@@ -3505,6 +3508,7 @@ static int32_t qc_sqlite_thread_init(void)
     int rc = sqlite3_open(":memory:", &this_thread.db);
     if (rc == SQLITE_OK)
     {
+        this_thread.sql_mode = this_unit.sql_mode;
         this_thread.initialized = true;
 
         MXS_INFO("In-memory sqlite database successfully opened for thread %lu.",
@@ -4000,12 +4004,14 @@ static void qc_sqlite_get_server_version(uint64_t* version)
 
 static int32_t qc_sqlite_get_sql_mode(qc_sql_mode_t* sql_mode)
 {
-    return QC_RESULT_ERROR;
+    *sql_mode = this_thread.sql_mode;
+    return QC_RESULT_OK;
 }
 
 int32_t qc_sqlite_set_sql_mode(qc_sql_mode_t sql_mode)
 {
-    return QC_RESULT_ERROR;
+    this_thread.sql_mode = sql_mode;
+    return QC_RESULT_OK;
 }
 
 /**
