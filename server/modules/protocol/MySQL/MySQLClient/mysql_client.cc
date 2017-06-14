@@ -988,7 +988,6 @@ gw_read_normal_data(DCB *dcb, GWBUF *read_buffer, int nbytes_read)
         }
 
         set_qc_mode(session, &read_buffer);
-        gwbuf_set_type(read_buffer, GWBUF_TYPE_MYSQL);
     }
 
     /** The query classifier classifies according to the service's server that has
@@ -1444,7 +1443,7 @@ static int route_by_statement(MXS_SESSION* session, uint64_t capabilities, GWBUF
         {
             CHK_GWBUF(packetbuf);
 
-            MySQLProtocol* proto = session->client_dcb->protocol;
+            MySQLProtocol* proto = (MySQLProtocol*)session->client_dcb->protocol;
             proto->current_command = (mysql_server_cmd_t)GWBUF_DATA(packetbuf)[4];
 
             /**
@@ -1622,7 +1621,7 @@ static spec_com_res_t process_special_commands(DCB *dcb, GWBUF *read_buffer, int
      * The option is stored as a two byte integer with the values 0 for enabling
      * multi-statements and 1 for disabling it.
      */
-    MySQLProtocol *proto = dcb->protocol;
+    MySQLProtocol *proto = (MySQLProtocol*)dcb->protocol;
     uint8_t opt;
 
     if (proto->current_command == MYSQL_COM_SET_OPTION &&
