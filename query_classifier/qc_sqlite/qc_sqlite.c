@@ -3416,6 +3416,15 @@ static int32_t qc_sqlite_setup(qc_sql_mode_t sql_mode, const char* cargs)
         function_name_mappings = function_name_mappings_103;
     }
 
+    if (sql_mode == QC_SQL_MODE_ORACLE)
+    {
+        function_name_mappings = function_name_mappings_oracle;
+    }
+    else if (parse_as == QC_PARSE_AS_103)
+    {
+        function_name_mappings = function_name_mappings_103;
+    }
+
     this_unit.setup = true;
     this_unit.log_level = log_level;
     this_unit.sql_mode = sql_mode;
@@ -4003,7 +4012,7 @@ static int32_t qc_sqlite_get_sql_mode(qc_sql_mode_t* sql_mode)
     return QC_RESULT_OK;
 }
 
-int32_t qc_sqlite_set_sql_mode(qc_sql_mode_t sql_mode)
+static int32_t qc_sqlite_set_sql_mode(qc_sql_mode_t sql_mode)
 {
     int32_t rv = QC_RESULT_OK;
 
