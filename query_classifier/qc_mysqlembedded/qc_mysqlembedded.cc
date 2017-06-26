@@ -190,6 +190,7 @@ static thread_local struct
 {
     qc_sql_mode_t sql_mode;
     NAME_MAPPING* function_name_mappings;
+    uint64_t version;
 } this_thread =
 {
     QC_SQL_MODE_DEFAULT,

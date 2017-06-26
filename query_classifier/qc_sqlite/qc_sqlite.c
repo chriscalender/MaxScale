@@ -2249,7 +2249,7 @@ void maxscaleDeallocate(Parse* pParse, Token* pName)
     ss_dassert(info);
 
     info->status = QC_QUERY_PARSED;
-    info->type_mask = (QUERY_TYPE_WRITE | type_mask);
+    info->type_mask = QUERY_TYPE_WRITE;
 
     // If information is collected in several passes, then we may
     // this information already.
@@ -2322,7 +2322,7 @@ void maxscaleExecute(Parse* pParse, Token* pName, int type_mask)
     ss_dassert(info);
 
     info->status = QC_QUERY_PARSED;
-    info->type_mask = QUERY_TYPE_WRITE;
+    info->type_mask = (QUERY_TYPE_WRITE | type_mask);
     info->operation = QUERY_OP_EXECUTE;
 
     // If information is collected in several passes, then we may
